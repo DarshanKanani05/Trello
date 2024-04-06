@@ -9,6 +9,7 @@
     <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="sign_in_description_text">Enter Your Details To Sign In Into Our Trello\'s Minimalist Interface</string>
 
     <!-- Sign Up Activity   -->
 

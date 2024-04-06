@@ -1,17 +1,16 @@
 package com.example.trello
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.trello.databinding.ActivityIntroBinding
+import com.example.trello.databinding.ActivitySignInBinding
 
-class IntroActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityIntroBinding
+class SignInActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySignInBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = ActivityIntroBinding.inflate(layoutInflater)
+        binding = ActivitySignInBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -21,13 +20,21 @@ class IntroActivity : AppCompatActivity() {
             insets
         }
 
-        binding.btnSignUp.setOnClickListener {
-            startActivity(Intent(this@IntroActivity, SignUpActivity::class.java))
+        setupActionBar()
+    }
+
+    private fun setupActionBar() {
+
+        setSupportActionBar(binding.toolbarSignUpActivity)
+
+        val actionBar = supportActionBar
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
         }
 
-        binding.btnSignIn.setOnClickListener {
-            startActivity(Intent(this@IntroActivity, SignInActivity::class.java))
-        }
+        binding.toolbarSignUpActivity.setNavigationOnClickListener { onBackPressed() }
 
     }
 }
