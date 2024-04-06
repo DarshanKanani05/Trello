@@ -34,7 +34,7 @@ class SignUpActivity : AppCompatActivity() {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
         }
 
-        bindnig.toolbarSignUpActivity.setNavigationOnClickListener { onBackPressed() }
+        bindnig.toolbarSignUpActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
     }
 }
