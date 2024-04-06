@@ -1,4 +1,4 @@
-package com.example.trello
+package com.example.trello.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,9 +6,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.trello.R
 import com.example.trello.databinding.ActivityIntroBinding
 
-class IntroActivity : AppCompatActivity() {
+
+
+class IntroActivity : BaseActivity() {
     private lateinit var binding: ActivityIntroBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityIntroBinding.inflate(layoutInflater)
