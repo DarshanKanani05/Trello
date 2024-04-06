@@ -5,4 +5,11 @@
     <string name="sign_in">SIGN IN</string>
     <string name="sign_up">SIGN UP</string>
     <string name="intro_text_description">Collaborate And Plan Together Across Multiple Devices On Trello\'s Minimalist Interface.</string>
+    <string name="sign_up_description_text">Enter Your Name, Email, Password And Join Our Community</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <!-- Sign Up Activity   -->
+
 </resources>

@@ -1,5 +1,6 @@
 package com.example.trello
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,9 @@ class IntroActivity : AppCompatActivity() {
             insets
         }
 
+        binding.btnSignUp.setOnClickListener {
+            startActivity(Intent(this@IntroActivity, SignUpActivity::class.java))
+        }
 
     }
 }
