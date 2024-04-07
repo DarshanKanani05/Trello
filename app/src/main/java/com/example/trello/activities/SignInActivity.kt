@@ -23,7 +23,7 @@ class SignInActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
 
-        auth=FirebaseAuth.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -32,7 +32,7 @@ class SignInActivity : BaseActivity() {
         }
 
         binding.btnSignIn.setOnClickListener {
-           signInRegisteredUser()
+            signInRegisteredUser()
         }
 
         setupActionBar()
@@ -50,37 +50,41 @@ class SignInActivity : BaseActivity() {
         binding.toolbarSignInActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
     }
 
-    private fun signInRegisteredUser(){
+    private fun signInRegisteredUser() {
         val email: String = binding.etEmailSignIn.text.toString().trim { it <= ' ' }
         val password: String = binding.etPasswordSignIn.text.toString().trim { it <= ' ' }
 
-        if (validateForm(email, password)){
+        if (validateForm(email, password)) {
             showProgressDialog(resources.getString(R.string.please_wait))
-            auth.signInWithEmailAndPassword(email,password)
+            auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     hideProgressDialog()
-                    if (task.isSuccessful){
-                        Log.d("sign in","signInWithEmail:success")
-                        val user=auth.currentUser
+                    if (task.isSuccessful) {
+                        Log.d("sign in", "signInWithEmail:success")
+                        val user = auth.currentUser
                         startActivity(Intent(this, MainActivity::class.java))
-                    }else{
-                        Log.w("sign in","signInWithEmail:failure",task.exception)
-                        Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.w("sign in", "signInWithEmail:failure", task.exception)
+                        Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
         }
     }
 
-    private fun validateForm(email:String,password:String):Boolean{
-        return when{
-            TextUtils.isEmpty(email)-> {
+    private fun validateForm(email: String, password: String): Boolean {
+        return when {
+            TextUtils.isEmpty(email) -> {
                 showErrorSnackBar("Please enter an email address")
                 false
             }
-            TextUtils.isEmpty(password)-> {
+
+            TextUtils.isEmpty(password) -> {
                 showErrorSnackBar("Please enter a password")
                 false
-            }else->{
+            }
+
+            else -> {
                 true
             }
 
