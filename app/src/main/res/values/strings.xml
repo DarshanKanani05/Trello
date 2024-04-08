@@ -15,4 +15,6 @@
     <string name="please_wait">Please Wait&#8230;</string>
     <!-- Sign Up Activity   -->
 
+    <string name="nav_my_profile">My Profile</string>
+    <string name="nav_sign_out">Sign Out</string>
 </resources>

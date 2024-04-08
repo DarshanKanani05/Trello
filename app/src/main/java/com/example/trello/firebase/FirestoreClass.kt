@@ -32,7 +32,7 @@ class FirestoreClass {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get()
             .addOnSuccessListener { document ->
                 val loggedInUser = document.toObject(User::class.java)
-                if (loggedInUser!=null)
+                if (loggedInUser != null)
                     activity.signInSuccess(loggedInUser)
             }.addOnFailureListener {
                 Log.e(
@@ -43,6 +43,11 @@ class FirestoreClass {
     }
 
     fun getCurrentUserId(): String {
-        return FirebaseAuth.getInstance().currentUser!!.uid
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        var currentUserID = ""
+        if (currentUser != null) {
+            currentUserID = currentUser.uid
+        }
+        return currentUserID
     }
 }
