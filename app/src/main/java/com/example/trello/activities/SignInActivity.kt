@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.trello.R
 import com.example.trello.databinding.ActivitySignInBinding
+import com.example.trello.models.User
 import com.google.firebase.auth.FirebaseAuth
 
 class SignInActivity : BaseActivity() {
@@ -89,6 +90,12 @@ class SignInActivity : BaseActivity() {
             }
 
         }
+    }
+
+    fun signInSuccess(user: User) {
+        hideProgressDialog()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
 }
