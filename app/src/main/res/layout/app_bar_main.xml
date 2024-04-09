@@ -7,14 +7,14 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.AppBarOverlay">
+        android:theme="@style/Theme.Trello.AppBarOverlay">
         
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_main_activity"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorAccent"
-            app:popupTheme="@style/Theme.AppCompat.PopupOverlay">
+            app:popupTheme="@style/Theme.Trello.PopupOverlay">
 
         </androidx.appcompat.widget.Toolbar>
         
