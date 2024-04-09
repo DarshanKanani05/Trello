@@ -2,17 +2,23 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Trello" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
     <style name="Theme.Trello" parent="Base.Theme.Trello" />
 
-    <style name="Theme.AppCompat.NoActionBar">
+    <style name="Theme.Trello.NoActionBar">
         <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.AppCompat.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"></style>
+    <style name="Theme.Trello.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
 
-    <style name="Theme.AppCompat.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"></style>
+    <style name="Theme.Trello.PopupOverlay" parent="ThemeOverlay.Material3.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
 </resources>
