@@ -18,8 +18,7 @@ data class User(
         parcel.readString()!!,
         parcel.readLong(),
         parcel.readString()!!
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
@@ -30,9 +29,7 @@ data class User(
         parcel.writeString(fcmToken)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents() = 0
 
     companion object CREATOR : Parcelable.Creator<User> {
         override fun createFromParcel(parcel: Parcel): User {

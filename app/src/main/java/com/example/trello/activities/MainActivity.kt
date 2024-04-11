@@ -3,13 +3,17 @@ package com.example.trello.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import com.bumptech.glide.Glide
 import com.example.trello.R
 import com.example.trello.databinding.ActivityMainBinding
+import com.example.trello.firebase.FirestoreClass
+import com.example.trello.models.User
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
@@ -23,7 +27,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setContentView(binding.root)
 
         setupActionBar()
-        binding.navView.setNavigationItemSelectedListener (this)
+        binding.navView.setNavigationItemSelectedListener(this)
+        FirestoreClass().signInUser(this)
     }
 
     private fun setupActionBar() {
@@ -90,5 +95,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    fun updateNavigationUserDetails(user: User) {
+        Glide
+            .with(this)
+            .load(user.image)
+            .centerCrop()
+            .placeholder(R.drawable.ic_user_place_holder)
+            .into(binding.root.findViewById(R.id.nav_user_image))
+
+        binding.root.findViewById<TextView>(R.id.tv_username).text = user.name
     }
 }
