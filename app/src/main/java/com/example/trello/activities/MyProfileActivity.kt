@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.MediaStore
+import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +22,8 @@ import com.example.trello.R
 import com.example.trello.databinding.ActivityMyProfileBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.User
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.io.IOException
 
 class MyProfileActivity : BaseActivity() {
@@ -31,6 +35,7 @@ class MyProfileActivity : BaseActivity() {
     }
 
     private var mSelectedImageFileUri: Uri? = null
+    private var mProfileImageURl: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMyProfileBinding.inflate(layoutInflater)
@@ -62,6 +67,12 @@ class MyProfileActivity : BaseActivity() {
                 )
             }
         }
+
+        binding.btnUpdate.setOnClickListener {
+            if (mSelectedImageFileUri != null) {
+                uploadUserImage()
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -90,7 +101,7 @@ class MyProfileActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST_CODE && data!!.data != null){
+        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
             mSelectedImageFileUri = data.data
 
             try {
@@ -100,7 +111,7 @@ class MyProfileActivity : BaseActivity() {
                     .centerCrop()
                     .placeholder(R.drawable.ic_user_place_holder)
                     .into(binding.root.findViewById(R.id.iv_profile_user_image))
-            }catch (e:IOException){
+            } catch (e: IOException) {
                 e.printStackTrace()
             }
 
@@ -135,5 +146,44 @@ class MyProfileActivity : BaseActivity() {
             binding.etMobile.setText(user.mobile.toString())
         }
 
+    }
+
+    private fun uploadUserImage() {
+        showProgressDialog(resources.getString(R.string.please_wait))
+
+        if (mSelectedImageFileUri != null) {
+            val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
+                "USER_IMAGE" + System.currentTimeMillis() + "." + getFileExtension(
+                    mSelectedImageFileUri
+                )
+            )
+
+            sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener { taskSnapshot ->
+                Log.e(
+                    "Firebase Image URL",
+                    taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
+                )
+
+                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
+                    Log.i(
+                        "Downloadable Image URL", uri.toString()
+                    )
+                    mProfileImageURl = uri.toString()
+                    hideProgressDialog()
+                    //TODO UpdateUserProfileData
+                }
+            }.addOnFailureListener { exception ->
+                Toast.makeText(this@MyProfileActivity, exception.message, Toast.LENGTH_LONG).show()
+
+                Log.e(
+                    "Firebase Image URL Error",exception.message.toString()
+                )
+                hideProgressDialog()
+            }
+        }
+    }
+
+    private fun getFileExtension(uri: Uri?): String? {
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri!!))
     }
 }
