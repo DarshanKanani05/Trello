@@ -1,16 +1,37 @@
 package com.example.trello.activities
 
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.example.trello.R
 import com.example.trello.databinding.ActivityMyProfileBinding
+import com.example.trello.firebase.FirestoreClass
+import com.example.trello.models.User
+import java.io.IOException
 
 class MyProfileActivity : BaseActivity() {
     private lateinit var binding: ActivityMyProfileBinding
+
+    companion object {
+        private const val READ_STORAGE_PERMISSION_CODE = 1
+        private const val PICK_IMAGE_REQUEST_CODE = 2
+    }
+
+    private var mSelectedImageFileUri: Uri? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMyProfileBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -23,6 +44,67 @@ class MyProfileActivity : BaseActivity() {
         }
 
         setupActionBar()
+
+        FirestoreClass().loadUserData(this)
+
+        binding.ivProfileUserImage.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                showImageChooser()
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                    READ_STORAGE_PERMISSION_CODE
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == READ_STORAGE_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showImageChooser()
+            }
+        } else {
+            Toast.makeText(
+                this,
+                "You Just Denied The Permission For Storage. You Can Also Allow It From Settings.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun showImageChooser() {
+        var galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST_CODE && data!!.data != null){
+            mSelectedImageFileUri = data.data
+
+            try {
+                Glide
+                    .with(this@MyProfileActivity)
+                    .load(mSelectedImageFileUri)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_user_place_holder)
+                    .into(binding.root.findViewById(R.id.iv_profile_user_image))
+            }catch (e:IOException){
+                e.printStackTrace()
+            }
+
+        }
     }
 
     private fun setupActionBar() {
@@ -36,5 +118,22 @@ class MyProfileActivity : BaseActivity() {
         }
 
         binding.toolbarMyProfileActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+    }
+
+    fun setUserDataInUI(user: User) {
+        Glide
+            .with(this@MyProfileActivity)
+            .load(user.image)
+            .centerCrop()
+            .placeholder(R.drawable.ic_user_place_holder)
+            .into(binding.root.findViewById(R.id.iv_profile_user_image))
+
+        binding.etName.setText(user.name)
+        binding.etEmail.setText(user.email)
+
+        if (user.mobile != 0L) {
+            binding.etMobile.setText(user.mobile.toString())
+        }
+
     }
 }

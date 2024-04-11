@@ -3,6 +3,7 @@ package com.example.trello.firebase
 import android.app.Activity
 import android.util.Log
 import com.example.trello.activities.MainActivity
+import com.example.trello.activities.MyProfileActivity
 import com.example.trello.activities.SignInActivity
 import com.example.trello.activities.SignUpActivity
 import com.example.trello.models.User
@@ -29,7 +30,7 @@ class FirestoreClass {
         }
     }
 
-    fun signInUser(activity: Activity) {
+    fun loadUserData(activity: Activity) {
         mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get()
             .addOnSuccessListener { document ->
                 val loggedInUser = document.toObject(User::class.java)!!
@@ -41,6 +42,9 @@ class FirestoreClass {
 
                     is MainActivity -> {
                         activity.updateNavigationUserDetails(loggedInUser)
+                    }
+                    is MyProfileActivity->{
+                        activity.setUserDataInUI(loggedInUser)
                     }
                 }
 
