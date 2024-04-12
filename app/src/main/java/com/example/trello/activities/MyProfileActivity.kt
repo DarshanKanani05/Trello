@@ -30,11 +30,6 @@ import java.io.IOException
 class MyProfileActivity : BaseActivity() {
     private lateinit var binding: ActivityMyProfileBinding
 
-    companion object {
-        private const val READ_STORAGE_PERMISSION_CODE = 1
-        private const val PICK_IMAGE_REQUEST_CODE = 2
-    }
-
     private var mSelectedImageFileUri: Uri? = null
     private lateinit var mUserDetails: User
     private var mProfileImageURl: String = ""
@@ -60,12 +55,12 @@ class MyProfileActivity : BaseActivity() {
                     android.Manifest.permission.READ_EXTERNAL_STORAGE
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                showImageChooser()
+                Constants.showImageChooser(this)
             } else {
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                    READ_STORAGE_PERMISSION_CODE
+                    Constants.READ_STORAGE_PERMISSION_CODE
                 )
             }
         }
@@ -73,7 +68,7 @@ class MyProfileActivity : BaseActivity() {
         binding.btnUpdate.setOnClickListener {
             if (mSelectedImageFileUri != null) {
                 uploadUserImage()
-            }else{
+            } else {
                 showProgressDialog(resources.getString(R.string.please_wait))
                 updateUserProfileData()
             }
@@ -86,9 +81,9 @@ class MyProfileActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == READ_STORAGE_PERMISSION_CODE) {
+        if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showImageChooser()
+                Constants.showImageChooser(this)
             }
         } else {
             Toast.makeText(
@@ -99,14 +94,10 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-    private fun showImageChooser() {
-        var galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
+        if (resultCode == Activity.RESULT_OK && requestCode == Constants.PICK_IMAGE_REQUEST_CODE && data!!.data != null) {
             mSelectedImageFileUri = data.data
 
             try {
@@ -124,8 +115,8 @@ class MyProfileActivity : BaseActivity() {
     }
 
     private fun setupActionBar() {
-        val toolBar: Toolbar = binding.root.findViewById(R.id.toolbar_my_profile_activity)
-        setSupportActionBar(toolBar)
+
+        setSupportActionBar(binding.toolbarMyProfileActivity)
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
@@ -145,7 +136,8 @@ class MyProfileActivity : BaseActivity() {
             .load(user.image)
             .centerCrop()
             .placeholder(R.drawable.ic_user_place_holder)
-            .into(binding.root.findViewById(R.id.iv_profile_user_image))
+            .into(binding.ivProfileUserImage)
+
 
         binding.etName.setText(user.name)
         binding.etEmail.setText(user.email)
@@ -171,7 +163,7 @@ class MyProfileActivity : BaseActivity() {
             userHashMap[Constants.MOBILE] = binding.etMobile.text.toString().toLong()
         }
 
-        FirestoreClass().updateUserProfileData(this,userHashMap)
+        FirestoreClass().updateUserProfileData(this, userHashMap)
     }
 
     private fun uploadUserImage() {
@@ -179,7 +171,8 @@ class MyProfileActivity : BaseActivity() {
 
         if (mSelectedImageFileUri != null) {
             val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
-                "USER_IMAGE" + System.currentTimeMillis() + "." + getFileExtension(
+                "USER_IMAGE" + System.currentTimeMillis() + "." + Constants.getFileExtension(
+                    this,
                     mSelectedImageFileUri
                 )
             )
@@ -208,9 +201,6 @@ class MyProfileActivity : BaseActivity() {
         }
     }
 
-    private fun getFileExtension(uri: Uri?): String? {
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri!!))
-    }
 
     fun profileUpdateSuccess() {
         hideProgressDialog()

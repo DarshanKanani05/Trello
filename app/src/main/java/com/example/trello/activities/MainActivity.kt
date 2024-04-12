@@ -15,6 +15,7 @@ import com.example.trello.R
 import com.example.trello.databinding.ActivityMainBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.User
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
@@ -34,6 +35,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setupActionBar()
         binding.navView.setNavigationItemSelectedListener(this)
         FirestoreClass().loadUserData(this)
+
+        var fabCreateBoard: FloatingActionButton = binding.root.findViewById(R.id.fab_create_board)
+        fabCreateBoard.setOnClickListener {
+            startActivity(Intent(this,CreateBoardActivity::class.java))
+        }
     }
 
     private fun setupActionBar() {
@@ -80,10 +86,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode==Activity.RESULT_OK&&requestCode== MY_PROFILE_REQUEST_CODE){
+        if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE) {
             FirestoreClass().loadUserData(this)
-        }else{
-            Log.e("Cancelled","Cancelled")
+        } else {
+            Log.e("Cancelled", "Cancelled")
         }
     }
 
