@@ -22,6 +22,7 @@ import java.io.IOException
 class CreateBoardActivity : BaseActivity() {
     private lateinit var binding: ActivityCreateBoardBinding
     private var mSelectedImageFileUri: Uri? = null
+    private lateinit var mUserName:String
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityCreateBoardBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -33,6 +34,10 @@ class CreateBoardActivity : BaseActivity() {
             insets
         }
         setupActionBar()
+
+        if (intent.hasExtra(Constants.NAME)){
+            mUserName = intent.getStringExtra(Constants.NAME).toString()
+        }
 
         binding.ivBoardImage.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
@@ -49,6 +54,11 @@ class CreateBoardActivity : BaseActivity() {
                 )
             }
         }
+    }
+
+    fun boardCreatedSuccessfully(){
+        hideProgressDialog()
+        finish()
     }
 
     private fun setupActionBar() {

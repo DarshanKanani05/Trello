@@ -3,10 +3,12 @@ package com.example.trello.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import com.example.trello.activities.CreateBoardActivity
 import com.example.trello.activities.MainActivity
 import com.example.trello.activities.MyProfileActivity
 import com.example.trello.activities.SignInActivity
 import com.example.trello.activities.SignUpActivity
+import com.example.trello.models.Board
 import com.example.trello.models.User
 import com.example.trello.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +31,18 @@ class FirestoreClass {
                 "Error writing documentation"
             )
         }
+    }
+
+    fun createBoard(activity: CreateBoardActivity, board: Board) {
+        mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.e(activity.javaClass.simpleName, "Board Created Successfully!")
+                Toast.makeText(activity, "Board Created Successfully!", Toast.LENGTH_SHORT).show()
+                activity.boardCreatedSuccessfully()
+            }.addOnFailureListener { exception ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error While Creating A Board.", exception)
+            }
     }
 
     fun updateUserProfileData(activity: MyProfileActivity, userHashMap: HashMap<String, Any>) {

@@ -15,6 +15,7 @@ import com.example.trello.R
 import com.example.trello.databinding.ActivityMainBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.User
+import com.example.trello.utils.Constants
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +26,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     companion object {
         const val MY_PROFILE_REQUEST_CODE = 11
     }
+
+    private lateinit var mUserName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -38,7 +41,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         var fabCreateBoard: FloatingActionButton = binding.root.findViewById(R.id.fab_create_board)
         fabCreateBoard.setOnClickListener {
-            startActivity(Intent(this,CreateBoardActivity::class.java))
+            val intent = Intent(this, CreateBoardActivity::class.java)
+            intent.putExtra(Constants.NAME, mUserName)
+            startActivity(intent)
         }
     }
 
@@ -117,6 +122,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     fun updateNavigationUserDetails(user: User) {
+        mUserName = user.name
         Glide
             .with(this)
             .load(user.image)
