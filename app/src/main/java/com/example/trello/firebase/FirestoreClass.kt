@@ -8,6 +8,7 @@ import com.example.trello.activities.MainActivity
 import com.example.trello.activities.MyProfileActivity
 import com.example.trello.activities.SignInActivity
 import com.example.trello.activities.SignUpActivity
+import com.example.trello.activities.TaskListActivity
 import com.example.trello.models.Board
 import com.example.trello.models.User
 import com.example.trello.utils.Constants
@@ -32,6 +33,21 @@ class FirestoreClass {
                 "Error writing documentation"
             )
         }
+    }
+
+    fun getBoardDetails(activity: TaskListActivity, documented: String) {
+        mFireStore.collection(Constants.BOARDS)
+            .document(documented).get()
+            .addOnSuccessListener { document ->
+                Log.i(activity.javaClass.simpleName, document.toString())
+
+                activity.boardDetails(document.toObject(Board::class.java)!!)
+
+            }.addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error while opening a board.", e)
+
+            }
     }
 
     fun createBoard(activity: CreateBoardActivity, board: Board) {
