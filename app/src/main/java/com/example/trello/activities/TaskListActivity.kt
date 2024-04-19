@@ -15,6 +15,7 @@ import com.example.trello.utils.Constants
 
 class TaskListActivity : BaseActivity() {
     private lateinit var binding: ActivityTaskListBinding
+    private lateinit var mBoardDetails: Board
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -36,8 +37,10 @@ class TaskListActivity : BaseActivity() {
     }
 
     fun boardDetails(board: Board) {
+        mBoardDetails = board
+
         hideProgressDialog()
-        setupActionBar(board.name)
+        setupActionBar()
 
         val addTaskList = Task(resources.getString(R.string.add_list))
         board.taskList.add(addTaskList)
@@ -49,14 +52,19 @@ class TaskListActivity : BaseActivity() {
         binding.rvTaskList.adapter = adapter
     }
 
-    private fun setupActionBar(title: String) {
+    fun addUpdateTaskListSuccess(){
+
+        FirestoreClass().getBoardDetails(this,mBoardDetails.documentId)
+    }
+
+    private fun setupActionBar() {
 
         setSupportActionBar(binding.toolbarTaskListActivity)
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_white_color_back_24dp)
-            actionBar.title = title
+            actionBar.title = mBoardDetails.name
         }
 
         binding.toolbarTaskListActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
