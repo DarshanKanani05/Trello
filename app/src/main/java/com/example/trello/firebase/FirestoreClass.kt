@@ -88,12 +88,12 @@ class FirestoreClass {
 
         mFireStore.collection(Constants.BOARDS).document(board.documentId).update(taskListHashMap)
             .addOnSuccessListener {
-                Log.e(activity.javaClass.simpleName, "Tasklist Updated Successfully.")
+                Log.e(activity.javaClass.simpleName, "TaskList Updated Successfully.")
 
                 activity.addUpdateTaskListSuccess()
             }.addOnFailureListener { exception ->
                 activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error While Creating A Board", exception)
+                Log.e(activity.javaClass.simpleName, "Error While Creating A TaskList", exception)
             }
     }
 

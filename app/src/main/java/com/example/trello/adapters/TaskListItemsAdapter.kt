@@ -5,12 +5,15 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trello.R
+import com.example.trello.activities.TaskListActivity
 import com.example.trello.models.Task
 
 open class TaskListItemsAdapter(private val context: Context, private var list: ArrayList<Task>) :
@@ -58,9 +61,19 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
                     View.GONE
             }
 
-            holder.itemView.findViewById<ImageButton>(R.id.ib_done_edit_list_name)
+            holder.itemView.findViewById<ImageButton>(R.id.ib_done_list_name)
                 .setOnClickListener {
-//                    TODO create entry in DB and display the task list
+                    val listName =
+                        holder.itemView.findViewById<EditText>(R.id.et_task_list_name).text.toString()
+
+                    if (listName.isNotEmpty()) {
+                        if (context is TaskListActivity) {
+                            context.createTaskList(listName)
+                        }
+                    } else {
+                        Toast.makeText(context, "Please Enter List Name.", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
         }
     }
