@@ -10,6 +10,7 @@ import com.example.trello.adapters.TaskListItemsAdapter
 import com.example.trello.databinding.ActivityTaskListBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.Board
+import com.example.trello.models.Card
 import com.example.trello.models.Task
 import com.example.trello.utils.Constants
 import java.text.FieldPosition
@@ -98,5 +99,29 @@ class TaskListActivity : BaseActivity() {
         }
 
         binding.toolbarTaskListActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+    }
+
+    fun addCardToTaskList(position: Int, cardName: String) {
+        mBoardDetails.taskList.removeAt(mBoardDetails.taskList.size - 1)
+
+        val cardAssignedUsersList: ArrayList<String> = ArrayList()
+        cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
+
+        val card = Card(cardName, FirestoreClass().getCurrentUserId(), cardAssignedUsersList)
+
+        val cardsList = mBoardDetails.taskList[position].cards
+        cardsList.add(card)
+
+        val task = Task(
+            mBoardDetails.taskList[position].title,
+            mBoardDetails.taskList[position].createdBy,
+            cardsList
+        )
+
+        mBoardDetails.taskList[position] = task
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+
+        FirestoreClass().addUpdateTaskList(this, mBoardDetails)
     }
 }
