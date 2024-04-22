@@ -1,5 +1,6 @@
 package com.example.trello.adapters
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Resources
@@ -12,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trello.R
 import com.example.trello.activities.TaskListActivity
@@ -35,6 +37,7 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
         return list.size
     }
 
+    @SuppressLint("CutPasteId")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
         if (holder is MyViewHolder) {
@@ -136,6 +139,13 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
                         .show()
                 }
             }
+
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).layoutManager =
+                LinearLayoutManager(context)
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).setHasFixedSize(true)
+
+            val adapter = CardListItemsAdapter(context, model.cards)
+            holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).adapter = adapter
         }
     }
 
