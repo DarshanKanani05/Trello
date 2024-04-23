@@ -1,6 +1,9 @@
 package com.example.trello.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,11 +16,24 @@ import com.example.trello.models.Board
 import com.example.trello.models.Card
 import com.example.trello.models.Task
 import com.example.trello.utils.Constants
-import java.text.FieldPosition
 
 class TaskListActivity : BaseActivity() {
     private lateinit var binding: ActivityTaskListBinding
     private lateinit var mBoardDetails: Board
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_members, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_members -> {
+                startActivity(Intent(this, MembersActivity::class.java))
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
