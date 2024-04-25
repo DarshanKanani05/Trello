@@ -1,6 +1,12 @@
 package com.example.trello.activities
 
+import android.app.Dialog
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
@@ -9,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trello.R
 import com.example.trello.adapters.MemberListItemsAdapter
 import com.example.trello.databinding.ActivityMembersBinding
+import com.example.trello.databinding.DialogProgressBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.Board
 import com.example.trello.models.User
@@ -59,5 +66,42 @@ class MembersActivity : BaseActivity() {
         }
 
         binding.toolbarMembersActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_add_member, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_add_member -> {
+                dialogSearchMember()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun dialogSearchMember() {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_search_member)
+        dialog.findViewById<TextView>(R.id.tv_add).setOnClickListener {
+            val email = dialog.findViewById<EditText>(R.id.et_email_search_member).text.toString()
+            if (email.isNotEmpty()) {
+                dialog.dismiss()
+                //TODO adding member logic
+            } else {
+                Toast.makeText(
+                    this@MembersActivity,
+                    "Please Enter Email Address!!!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        dialog.findViewById<TextView>(R.id.tv_cancel).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 }
