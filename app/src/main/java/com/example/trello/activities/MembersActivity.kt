@@ -5,9 +5,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trello.R
+import com.example.trello.adapters.MemberListItemsAdapter
 import com.example.trello.databinding.ActivityMembersBinding
+import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.Board
+import com.example.trello.models.User
 import com.example.trello.utils.Constants
 
 class MembersActivity : BaseActivity() {
@@ -29,6 +33,19 @@ class MembersActivity : BaseActivity() {
         }
 
         setupActionBar()
+
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().getAssignedMembersListDetails(this, mBoardDetails.assignedTo)
+    }
+
+    fun setupMembersList(list: ArrayList<User>) {
+        hideProgressDialog()
+
+        binding.rvMembersList.layoutManager = LinearLayoutManager(this)
+        binding.rvMembersList.setHasFixedSize(true)
+
+        val adapter = MemberListItemsAdapter(this, list)
+        binding.rvMembersList.adapter = adapter
     }
 
     private fun setupActionBar() {

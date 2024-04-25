@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.trello.activities.CreateBoardActivity
 import com.example.trello.activities.MainActivity
+import com.example.trello.activities.MembersActivity
 import com.example.trello.activities.MyProfileActivity
 import com.example.trello.activities.SignInActivity
 import com.example.trello.activities.SignUpActivity
@@ -153,5 +154,23 @@ class FirestoreClass {
             currentUserID = currentUser.uid
         }
         return currentUserID
+    }
+
+    fun getAssignedMembersListDetails(activity: MembersActivity, assignedTo: ArrayList<String>) {
+        mFireStore.collection(Constants.USERS).whereIn(Constants.ID, assignedTo).get()
+            .addOnSuccessListener { document ->
+                Log.e(activity.javaClass.simpleName, document.documents.toString())
+
+                val userList: ArrayList<User> = ArrayList()
+                for (i in document.documents) {
+                    val user = i.toObject(User::class.java)!!
+                    userList.add(user)
+                }
+
+                activity.setupMembersList(userList)
+            }.addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "getAssignedMembersListDetails: Error", e)
+            }
     }
 }
