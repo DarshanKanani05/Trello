@@ -8,14 +8,12 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.trello.R
 import com.example.trello.adapters.MemberListItemsAdapter
 import com.example.trello.databinding.ActivityMembersBinding
-import com.example.trello.databinding.DialogProgressBinding
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.Board
 import com.example.trello.models.User
@@ -24,6 +22,7 @@ import com.example.trello.utils.Constants
 class MembersActivity : BaseActivity() {
     private lateinit var binding: ActivityMembersBinding
     private lateinit var mBoardDetails: Board
+    private lateinit var mAssignedMembersList: ArrayList<User>
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMembersBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -46,6 +45,7 @@ class MembersActivity : BaseActivity() {
     }
 
     fun setupMembersList(list: ArrayList<User>) {
+        mAssignedMembersList = list
         hideProgressDialog()
 
         binding.rvMembersList.layoutManager = LinearLayoutManager(this)
@@ -53,6 +53,11 @@ class MembersActivity : BaseActivity() {
 
         val adapter = MemberListItemsAdapter(this, list)
         binding.rvMembersList.adapter = adapter
+    }
+
+    fun memberDetails(user: User) {
+        mBoardDetails.assignedTo.add(user.id)
+        FirestoreClass().assignMemberToBoard(this, mBoardDetails, user)
     }
 
     private fun setupActionBar() {
@@ -90,7 +95,8 @@ class MembersActivity : BaseActivity() {
             val email = dialog.findViewById<EditText>(R.id.et_email_search_member).text.toString()
             if (email.isNotEmpty()) {
                 dialog.dismiss()
-                //TODO adding member logic
+                showProgressDialog(resources.getString(R.string.please_wait))
+                FirestoreClass().getMemberDetails(this, email)
             } else {
                 Toast.makeText(
                     this@MembersActivity,
@@ -103,5 +109,11 @@ class MembersActivity : BaseActivity() {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    fun memberAssignSuccess(user: User) {
+        hideProgressDialog()
+        mAssignedMembersList.add(user)
+        setupMembersList(mAssignedMembersList)
     }
 }
