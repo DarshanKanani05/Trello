@@ -1,7 +1,9 @@
 package com.example.trello.activities
 
+import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
+import android.text.BoringLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
@@ -23,6 +25,7 @@ class MembersActivity : BaseActivity() {
     private lateinit var binding: ActivityMembersBinding
     private lateinit var mBoardDetails: Board
     private lateinit var mAssignedMembersList: ArrayList<User>
+    private var anyChangesMade: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMembersBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -111,9 +114,19 @@ class MembersActivity : BaseActivity() {
         dialog.show()
     }
 
+    override fun onBackPressed() {
+        if (anyChangesMade) {
+            setResult(Activity.RESULT_OK)
+        }
+        super.onBackPressed()
+    }
+
     fun memberAssignSuccess(user: User) {
         hideProgressDialog()
         mAssignedMembersList.add(user)
+
+        anyChangesMade = true
+
         setupMembersList(mAssignedMembersList)
     }
 }

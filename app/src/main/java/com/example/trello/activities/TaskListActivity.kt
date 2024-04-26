@@ -1,7 +1,9 @@
 package com.example.trello.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
@@ -20,6 +22,7 @@ import com.example.trello.utils.Constants
 class TaskListActivity : BaseActivity() {
     private lateinit var binding: ActivityTaskListBinding
     private lateinit var mBoardDetails: Board
+    private lateinit var mBoardDocumentId: String
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_members, menu)
         return super.onCreateOptionsMenu(menu)
@@ -30,7 +33,8 @@ class TaskListActivity : BaseActivity() {
             R.id.action_members -> {
                 val intent = Intent(this, MembersActivity::class.java)
                 intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
-                startActivity(intent)
+                startActivityForResult(intent, MEMBERS_REQUEST_CODE)
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
@@ -47,13 +51,22 @@ class TaskListActivity : BaseActivity() {
             insets
         }
 
-        var boardDocumentId = ""
         if (intent.hasExtra(Constants.DOCUMENT_ID)) {
-            boardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID).toString()
+            mBoardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID).toString()
         }
 
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getBoardDetails(this, boardDocumentId)
+        FirestoreClass().getBoardDetails(this, mBoardDocumentId)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == MEMBERS_REQUEST_CODE) {
+            showProgressDialog(resources.getString(R.string.please_wait))
+            FirestoreClass().getBoardDetails(this, mBoardDocumentId)
+        } else {
+            Log.e("Cancelled", "onActivityResult: Cancelled")
+        }
     }
 
     fun boardDetails(board: Board) {
@@ -141,5 +154,9 @@ class TaskListActivity : BaseActivity() {
         showProgressDialog(resources.getString(R.string.please_wait))
 
         FirestoreClass().addUpdateTaskList(this, mBoardDetails)
+    }
+
+    companion object {
+        const val MEMBERS_REQUEST_CODE: Int = 13
     }
 }
