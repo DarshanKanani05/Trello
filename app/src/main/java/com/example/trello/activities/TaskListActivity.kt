@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.trello.CardDetailsActivity
 import com.example.trello.R
 import com.example.trello.adapters.TaskListItemsAdapter
 import com.example.trello.databinding.ActivityTaskListBinding
@@ -26,6 +27,10 @@ class TaskListActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_members, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    fun cardDetails(taskListPosition: Int, cardPosition: Int) {
+        startActivity(Intent(this, CardDetailsActivity::class.java))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

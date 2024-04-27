@@ -146,6 +146,16 @@ open class TaskListItemsAdapter(private val context: Context, private var list: 
 
             val adapter = CardListItemsAdapter(context, model.cards)
             holder.itemView.findViewById<RecyclerView>(R.id.rv_card_list).adapter = adapter
+
+            adapter.setOnClickListener(
+                object : CardListItemsAdapter.OnClickListener {
+                    override fun onClick(cardPosition: Int) {
+                        if (context is TaskListActivity) {
+                            context.cardDetails(position, cardPosition)
+                        }
+                    }
+                }
+            )
         }
     }
 
