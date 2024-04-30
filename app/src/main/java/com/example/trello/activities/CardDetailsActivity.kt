@@ -1,6 +1,7 @@
 package com.example.trello.activities
 
 import android.os.Bundle
+import android.view.Menu
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -26,6 +27,9 @@ class CardDetailsActivity : BaseActivity() {
         }
         getIntentData()
         setupActionBar()
+
+        binding.etNameCardDetails.setText(mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].name)
+        binding.etNameCardDetails.setSelection(binding.etNameCardDetails.text.toString().length)
     }
 
     private fun setupActionBar() {
@@ -37,6 +41,11 @@ class CardDetailsActivity : BaseActivity() {
             actionBar.title = mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].name
         }
         binding.toolbarCardDetailsActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_delete_card, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun getIntentData() {

@@ -33,7 +33,7 @@ class TaskListActivity : BaseActivity() {
         intent.putExtra(Constants.BOARD_DETAIL, mBoardDetails)
         intent.putExtra(Constants.TASK_LIST_ITEM_POSITION, taskListPosition)
         intent.putExtra(Constants.CARD_LIST_ITEM_POSITION, cardPosition)
-        startActivity(intent)
+        startActivityForResult(intent, CARD_DETAILS_REQUEST_CODE)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -69,7 +69,7 @@ class TaskListActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == MEMBERS_REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == MEMBERS_REQUEST_CODE || requestCode == CARD_DETAILS_REQUEST_CODE) {
             showProgressDialog(resources.getString(R.string.please_wait))
             FirestoreClass().getBoardDetails(this, mBoardDocumentId)
         } else {
@@ -166,5 +166,6 @@ class TaskListActivity : BaseActivity() {
 
     companion object {
         const val MEMBERS_REQUEST_CODE: Int = 13
+        const val CARD_DETAILS_REQUEST_CODE: Int = 14
     }
 }
