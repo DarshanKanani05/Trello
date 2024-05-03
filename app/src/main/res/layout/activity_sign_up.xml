@@ -50,7 +50,6 @@
             android:layout_marginTop="@dimen/authentication_screen_card_view_marginTop"
             android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
             android:elevation="@dimen/card_view_elevation"
-
             app:cardCornerRadius="@dimen/card_view_corner_radius">
 
 

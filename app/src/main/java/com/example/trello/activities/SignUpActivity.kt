@@ -26,6 +26,9 @@ class SignUpActivity : BaseActivity() {
             insets
         }
         setupActionBar()
+        binding.btnSignUp.setOnClickListener {
+            registerUser()
+        }
     }
 
     fun userRegisteredSuccess() {
@@ -47,10 +50,6 @@ class SignUpActivity : BaseActivity() {
         }
 
         binding.toolbarSignUpActivity.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
-
-        binding.btnSignUp.setOnClickListener {
-            registerUser()
-        }
     }
 
     private fun registerUser() {
