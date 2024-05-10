@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.trello.R
 import com.example.trello.databinding.ActivityCardDetailsBinding
 import com.example.trello.dialogs.LabelColorListDialog
+import com.example.trello.dialogs.MembersListDialog
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.Board
 import com.example.trello.models.Card
@@ -59,6 +60,10 @@ class CardDetailsActivity : BaseActivity() {
 
         binding.tvSelectLabelColor.setOnClickListener {
             labelColorsListDialog()
+        }
+
+        binding.tvSelectMembers.setOnClickListener {
+            membersListDialog()
         }
     }
 
@@ -124,6 +129,36 @@ class CardDetailsActivity : BaseActivity() {
         if (intent.hasExtra(Constants.BOARD_MEMBERS_LIST)) {
             mMembersDetailList = intent.getParcelableArrayListExtra(Constants.BOARD_MEMBERS_LIST)!!
         }
+    }
+
+    private fun membersListDialog() {
+        var cardAssignedMembersList =
+            mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo
+
+        if (cardAssignedMembersList.size > 0) {
+            for (i in mMembersDetailList.indices) {
+                for (j in cardAssignedMembersList) {
+                    if (mMembersDetailList[i].id == j) {
+                        mMembersDetailList[i].selected = true
+                    }
+                }
+            }
+        } else {
+            for (i in mMembersDetailList.indices) {
+                mMembersDetailList[i].selected = false
+            }
+        }
+
+        val listDialog = object : MembersListDialog(
+            this,
+            mMembersDetailList,
+            resources.getString(R.string.str_select_member)
+        ) {
+            override fun onItemSelected(user: User, action: String) {
+                //TODO implement the selected member functionality
+            }
+        }
+        listDialog.show()
     }
 
     private fun updateCardDetails() {
