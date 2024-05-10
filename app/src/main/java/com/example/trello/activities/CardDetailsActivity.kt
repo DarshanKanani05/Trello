@@ -17,6 +17,7 @@ import com.example.trello.firebase.FirestoreClass
 import com.example.trello.models.Board
 import com.example.trello.models.Card
 import com.example.trello.models.Task
+import com.example.trello.models.User
 import com.example.trello.utils.Constants
 
 @Suppress("DEPRECATION")
@@ -26,6 +27,7 @@ class CardDetailsActivity : BaseActivity() {
     private var mTaskListPosition = -1
     private var mCardPosition = -1
     private var mSelectedColor = ""
+    private lateinit var mMembersDetailList: ArrayList<User>
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityCardDetailsBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -118,6 +120,9 @@ class CardDetailsActivity : BaseActivity() {
         }
         if (intent.hasExtra(Constants.CARD_LIST_ITEM_POSITION)) {
             mCardPosition = intent.getIntExtra(Constants.CARD_LIST_ITEM_POSITION, -1)
+        }
+        if (intent.hasExtra(Constants.BOARD_MEMBERS_LIST)) {
+            mMembersDetailList = intent.getParcelableArrayListExtra(Constants.BOARD_MEMBERS_LIST)!!
         }
     }
 
