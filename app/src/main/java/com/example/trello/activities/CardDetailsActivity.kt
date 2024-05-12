@@ -283,7 +283,7 @@ class CardDetailsActivity : BaseActivity() {
 
             binding.rvSelectedMemberList.layoutManager = GridLayoutManager(this, 6)
 
-            val adapter = CardMemberListItemsAdapter(this, selectedMemberList)
+            val adapter = CardMemberListItemsAdapter(this, selectedMemberList, true)
             binding.rvSelectedMemberList.adapter = adapter
             adapter.setOnClickListener(
                 object : CardMemberListItemsAdapter.OnClickListener {
