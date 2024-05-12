@@ -69,6 +69,8 @@ class CardDetailsActivity : BaseActivity() {
         binding.tvSelectMembers.setOnClickListener {
             membersListDialog()
         }
+
+        setupSelectedMembersList()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -159,7 +161,30 @@ class CardDetailsActivity : BaseActivity() {
             resources.getString(R.string.str_select_member)
         ) {
             override fun onItemSelected(user: User, action: String) {
-                //TODO implement the selected member functionality
+                if (action == Constants.SELECT) {
+                    if (!mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo.contains(
+                            user.id
+                        )
+                    ) {
+                        mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo.add(
+                            user.id
+                        )
+                    }
+
+                    setupSelectedMembersList()
+                } else {
+                    mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo.remove(
+                        user.id
+                    )
+
+                    for (i in mMembersDetailList.indices) {
+                        if (mMembersDetailList[i].id == user.id) {
+                            mMembersDetailList[i].selected = false
+                        }
+                    }
+
+                    setupSelectedMembersList()
+                }
             }
         }
         listDialog.show()
@@ -172,6 +197,9 @@ class CardDetailsActivity : BaseActivity() {
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo,
             mSelectedColor
         )
+
+        val taskList: ArrayList<Task> = mBoardDetails.taskList
+        taskList.removeAt(taskList.size - 1)
 
         mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition] = card
         showProgressDialog(resources.getString(R.string.please_wait))
@@ -253,7 +281,7 @@ class CardDetailsActivity : BaseActivity() {
             binding.tvSelectMembers.visibility = View.GONE
             binding.rvSelectedMemberList.visibility = View.VISIBLE
 
-            binding.rvSelectedMemberList.layoutManager = GridLayoutManager(this, 4)
+            binding.rvSelectedMemberList.layoutManager = GridLayoutManager(this, 6)
 
             val adapter = CardMemberListItemsAdapter(this, selectedMemberList)
             binding.rvSelectedMemberList.adapter = adapter
