@@ -34,6 +34,16 @@ object Constants {
     const val TASK_LIST_ITEM_POSITION: String = "task_list_item_position"
     const val CARD_LIST_ITEM_POSITION: String = "card_list_item_position"
 
+    const val FCM_BASE_URL: String = "https://fcm.googleapis.com/fcm/send"
+    const val FCM_AUTHORIZATION: String = "authorization"
+    const val FCM_KEY: String = "key"
+    const val FCM_SERVER_KEY: String =
+        "AAAAcH8P7C4:APA91bHBE8Ngxr3hppK_QOgKIEsUTKA0S4zz2EROke-YCfuKdz9YHBSQvw7mQ7W4nok0F9RGmH-8lKTspJXtjeqAV80qY64FKhXd5BHgXnm9pSlmN5kjKT7M6rDfYHuRlS-E3FyO36lz"
+    const val FCM_KEY_TITLE: String = "title"
+    const val FCM_KEY_MESSAGE: String = "message"
+    const val FCM_KEY_DATA: String = "data"
+    const val FCM_KEY_TO: String = "to"
+
     fun showImageChooser(activity: Activity) {
         var galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         activity.startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
