@@ -20,13 +20,6 @@
         android:textSize="@dimen/intro_screen_title_text_size"
         android:textStyle="bold" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="@dimen/intro_screen_image_marginTop"
-        android:contentDescription="@string/image_contentDescription"
-        android:src="@drawable/ic_task_image" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,37 +40,179 @@
         android:textColor="@color/secondary_text_color"
         android:textSize="@dimen/intro_text_size" />
 
-    <Button
-        android:id="@+id/btn_sign_in"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="@dimen/btn_marginStartEnd"
-        android:layout_marginTop="@dimen/intro_screen_sign_in_btn_marginTop"
-        android:layout_marginEnd="@dimen/btn_marginStartEnd"
-        android:background="@drawable/shape_button_rounded"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="center"
-        android:paddingTop="@dimen/btn_paddingTopBottom"
-        android:paddingBottom="@dimen/btn_paddingTopBottom"
-        android:text="@string/sign_in"
-        android:textColor="@color/white"
-        android:textSize="@dimen/btn_text_size" />
+        android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+        android:layout_marginTop="@dimen/authentication_screen_card_view_marginTop"
+        android:layout_marginEnd="@dimen/authentication_screen_marginStartEnd"
+        android:elevation="@dimen/card_view_elevation"
+        app:cardCornerRadius="@dimen/card_view_corner_radius">
 
-    <Button
-        android:id="@+id/btn_sign_up"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="@dimen/btn_marginStartEnd"
-        android:layout_marginTop="@dimen/intro_screen_sign_up_btn_marginTop"
-        android:layout_marginEnd="@dimen/btn_marginStartEnd"
-        android:background="@drawable/white_border_shape_button_rounded"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="center"
-        android:paddingTop="@dimen/btn_paddingTopBottom"
-        android:paddingBottom="@dimen/btn_paddingTopBottom"
-        android:text="@string/sign_up"
-        android:textColor="@color/colorAccent"
-        android:textSize="@dimen/btn_text_size" />
+
+        <FrameLayout
+            android:id="@+id/fl_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/card_view_layout_content_padding">
+
+            <LinearLayout
+                android:id="@+id/ll_sign_up_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_view_layout_content_padding"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+                    android:layout_marginEnd="@dimen/authentication_screen_til_marginStartEnd">
+
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_name_signup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/name"
+                        android:inputType="textEmailAddress"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+                    android:layout_marginEnd="@dimen/authentication_screen_til_marginStartEnd">
+
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_email_signup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+                    android:layout_marginEnd="@dimen/authentication_screen_til_marginStartEnd">
+
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_password_signup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password"
+                        android:inputType="textEmailAddress"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btn_sign_up"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/btn_marginStartEnd"
+                    android:layout_marginTop="@dimen/intro_screen_sign_up_btn_marginTop"
+                    android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                    android:layout_marginBottom="@dimen/btn_paddingTopBottom"
+                    android:background="@drawable/shape_button_rounded"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/btn_paddingTopBottom"
+                    android:text="@string/sign_up"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/btn_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_switch_to_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/already_have_an_account_login"
+                    android:textColor="@color/colorAccent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_sign_in_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_view_layout_content_padding"
+                android:visibility="visible">
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+                    android:layout_marginTop="@dimen/authentication_screen_til_marginTop"
+                    android:layout_marginEnd="@dimen/authentication_screen_til_marginStartEnd">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_email_sign_in"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        android:textSize="@dimen/et_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/authentication_screen_marginStartEnd"
+                    android:layout_marginTop="@dimen/authentication_screen_til_marginTop"
+                    android:layout_marginEnd="@dimen/authentication_screen_til_marginStartEnd">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_password_sign_in"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btn_sign_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/btn_marginStartEnd"
+                    android:layout_marginTop="@dimen/sign_up_screen_btn_marginTop"
+                    android:layout_marginEnd="@dimen/btn_marginStartEnd"
+                    android:background="@drawable/shape_button_rounded"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/btn_paddingTopBottom"
+                    android:paddingBottom="@dimen/btn_paddingTopBottom"
+                    android:text="@string/sign_in"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/btn_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_switch_to_signup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/don_t_have_an_account_sign_up"
+                    android:textColor="@color/colorAccent" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

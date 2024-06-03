@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -27,8 +28,21 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.DataOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import javax.net.ssl.HttpsURLConnection
 
+@Suppress("DEPRECATION")
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
 
@@ -50,7 +64,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding.navView.setNavigationItemSelectedListener(this)
 
         mSharedPreferences =
-            this.getSharedPreferences(Constants.TRELLO_PREFERENCES, Context.MODE_PRIVATE)
+            this.getSharedPreferences(Constants.TASK_MASTER_PREFERENCES, Context.MODE_PRIVATE)
 
         val tokenUpdated = mSharedPreferences.getBoolean(Constants.FCM_TOKEN_UPDATED, false)
         if (tokenUpdated) {
@@ -96,6 +110,30 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     startActivity(intent)
                 }
             })
+
+//            boardsList.forEach { board ->
+//                board.taskList.forEach { task ->
+//                    task.cards.forEach { card ->
+//                        val cardDueDate = card.dueDate
+//                        val currentDate = System.currentTimeMillis()
+//                        val oneDayBeforeDueDate = cardDueDate - (24 * 60 * 60 * 1000)
+//
+//                        if (currentDate in oneDayBeforeDueDate..cardDueDate) {
+//                            val assignedToTokens = card.assignedTo.map { userId ->
+//                                FirestoreClass().getUserFcmToken(userId)
+//                            }
+//
+//                            SendDueDateNotificationAsyncTask(
+//                                board.name,
+//                                task.title,
+//                                card.name,
+//                                card.dueDate,
+//                                assignedToTokens
+//                            ).execute()
+//                        }
+//                    }
+//                }
+//            }
         } else {
             rvBoardsList.visibility = View.GONE
             tvNoBoardsAvailable.visibility = View.VISIBLE
@@ -213,5 +251,101 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().updateUserProfileData(this, userHashMap)
     }
+
+//    private inner class SendDueDateNotificationAsyncTask(
+//        val boardName: String,
+//        val taskName: String,
+//        val cardName: String,
+//        val dueDate: Long,
+//        val assignedToToken: List<String?>
+//    ) : AsyncTask<Any, Void, String>() {
+//        override fun onPreExecute() {
+//            super.onPreExecute()
+//            showProgressDialog(resources.getString(R.string.please_wait))
+//        }
+//
+//        override fun doInBackground(vararg params: Any?): String {
+//            var result: String
+//            var connection: HttpURLConnection? = null
+//            try {
+//                val url = URL(Constants.FCM_BASE_URL)
+//                connection = url.openConnection() as HttpURLConnection
+//                connection.doInput = true
+//                connection.doOutput = true
+//                connection.instanceFollowRedirects = false
+//                connection.requestMethod = "POST"
+//
+//                connection.setRequestProperty("Content-Type", "application/json")
+//                connection.setRequestProperty("charset", "utf-8")
+//                connection.setRequestProperty("Accept", "application/json")
+//
+//                connection.setRequestProperty(
+//                    Constants.FCM_AUTHORIZATION,
+//                    "${Constants.FCM_KEY}=${Constants.FCM_SERVER_KEY}"
+//                )
+//                connection.useCaches = false
+//
+//                val wr = DataOutputStream(connection.outputStream)
+//                val jsonRequest = JSONObject()
+//                val dataObject = JSONObject()
+//                dataObject.put(Constants.FCM_KEY_TITLE, "Due Date Reminder")
+//                dataObject.put(
+//                    Constants.FCM_KEY_MESSAGE,
+//                    "The Card $cardName in the task $taskName of board $boardName is due on ${
+//                        formatDueDate(dueDate)
+//                    }"
+//                )
+//                jsonRequest.put(Constants.FCM_KEY_DATA, dataObject)
+//                jsonRequest.put(Constants.FCM_KEY_REGISTRATION_IDS, JSONArray(assignedToToken))
+//
+//                wr.writeBytes(jsonRequest.toString())
+//                wr.flush()
+//                wr.close()
+//                val httpResult: Int = connection.responseCode
+//                if (httpResult == HttpsURLConnection.HTTP_OK) {
+//                    val inputStream = connection.inputStream
+//
+//                    val reader = BufferedReader(InputStreamReader(inputStream))
+//                    val sb = StringBuilder()
+//                    var line: String?
+//                    try {
+//                        while (reader.readLine().also { line = it } != null) {
+//                            sb.append(line + "\n")
+//                        }
+//                    } catch (e: IOException) {
+//                        e.printStackTrace()
+//                    } finally {
+//                        try {
+//                            inputStream.close()
+//                        } catch (e: IOException) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//                    result = sb.toString()
+//                } else {
+//                    result = connection.responseMessage
+//                }
+//            } catch (e: SocketTimeoutException) {
+//                result = "Connection Timeout"
+//            } catch (e: Exception) {
+//                result = "Error : " + e.message
+//            } finally {
+//                connection?.disconnect()
+//            }
+//            return result
+//        }
+//
+//        override fun onPostExecute(result: String?) {
+//            super.onPostExecute(result)
+//            hideProgressDialog()
+//            Log.e("JSON Response Result", "onPostExecute: $result")
+//        }
+//
+//        private fun formatDueDate(dueDate: Long): String {
+//            val date = Date(dueDate)
+//            val dateFormat = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
+//            return dateFormat.format(date)
+//        }
+//    }
 
 }

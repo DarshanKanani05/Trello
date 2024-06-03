@@ -12,8 +12,9 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.trello.R
+import com.example.trello.activities.IntroActivity
 import com.example.trello.activities.MainActivity
-import com.example.trello.activities.SignInActivity
+import com.example.trello.activities.TaskListActivity
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.utils.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -26,6 +27,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         remoteMessage.data.isNotEmpty().let {
             Log.d(TAG, "onMessageReceived: Message Data Payload : ${remoteMessage.data}")
+            val isTaskDueDateNotification =
+                remoteMessage.data[Constants.FCM_KEY_IS_DUE_DATE_NOTIFICATION] ?: "false"
+
+//            if (isTaskDueDateNotification == "true") {
+//                val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
+//                val message = remoteMessage.data[Constants.FCM_KEY_MESSAGE]!!
+//                val boardId = remoteMessage.data[Constants.FCM_KEY_BOARD_ID]!!
+//                val taskId = remoteMessage.data[Constants.FCM_KEY_TASK_ID]!!
+//                val cardId = remoteMessage.data[Constants.FCM_KEY_CARD_ID]!!
+//                sendDueDateNotification(title, message, boardId, taskId, cardId)
+//            }
 
             val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
             val message = remoteMessage.data[Constants.FCM_KEY_MESSAGE]!!
@@ -46,7 +58,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendRegistrationToServer(token: String?) {
         var sharedPreferences =
-            this.getSharedPreferences(Constants.TRELLO_PREFERENCES, Context.MODE_PRIVATE)
+            this.getSharedPreferences(Constants.TASK_MASTER_PREFERENCES, Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString(Constants.FCM_TOKEN, token)
         editor.apply()
@@ -57,9 +69,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val intent = if (FirestoreClass().getCurrentUserId().isNotEmpty()) {
             Intent(this, MainActivity::class.java)
         } else {
-            Intent(this, SignInActivity::class.java)
+            Intent(this, IntroActivity::class.java)
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+        )
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         val channelId = this.resources.getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -77,13 +93,51 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Channel Trello",
+                "Channel Task Master",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationManager.createNotificationChannel(channel)
         }
         notificationManager.notify(0, notificationBuilder.build())
     }
+
+//    private fun sendDueDateNotification(
+//        title: String,
+//        message: String,
+//        boardId: String,
+//        taskId: String,
+//        cardId: String
+//    ) {
+//        val intent = Intent(this, TaskListActivity::class.java)
+//        intent.putExtra(Constants.DOCUMENT_ID, boardId)
+//        intent.putExtra(Constants.TASK_ID, taskId)
+//        intent.putExtra(Constants.CARD_ID, cardId)
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+//        val channelId = this.resources.getString(R.string.default_notification_channel_id)
+//        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+//        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+//            .setSmallIcon(R.drawable.ic_stat_ic_notification)
+//            .setContentTitle(title)
+//            .setContentText(message)
+//            .setAutoCancel(true)
+//            .setSound(defaultSoundUri)
+//            .setContentIntent(pendingIntent)
+//
+//        val notificationManager =
+//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val channel = NotificationChannel(
+//                channelId,
+//                "Channel Task Master",
+//                NotificationManager.IMPORTANCE_DEFAULT
+//            )
+//            notificationManager.createNotificationChannel(channel)
+//        }
+//        notificationManager.notify(0, notificationBuilder.build())
+//
+//    }
 
     companion object {
         private const val TAG = "MyFirebaseMsgService"

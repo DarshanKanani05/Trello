@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">Trello</string>
+    <string name="app_name">Task Master</string>
     <string name="image_contentDescription">Image</string>
     <string name="let_s_get_started_text">Let\'s Get Started</string>
     <string name="sign_in">SIGN IN</string>
     <string name="sign_up">SIGN UP</string>
-    <string name="intro_text_description">Collaborate And Plan Together Across Multiple Devices On Trello\'s Minimalist Interface.</string>
+    <string name="intro_text_description">Collaborate And Plan Together Across Multiple Devices On Task Master\'s Minimalist Interface.</string>
     <string name="sign_up_description_text">Enter Your Name, Email, Password And Join Our Community</string>
     <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="sign_in_description_text">Enter Your Details To Sign In Into Our Trello\'s Minimalist Interface</string>
+    <string name="sign_in_description_text">Enter Your Details To Sign In Into Our Task Master\'s Minimalist Interface</string>
 
     <string name="please_click_back_again_to_exit">Please click back again to exit.</string>
     <string name="please_wait">Please Wait&#8230;</string>
@@ -35,6 +35,7 @@
     <string name="add_list">Add List</string>
 
     <string name="members">Members</string>
+    <string name="delete_board">Delete Board</string>
 
     <string name="add_member">Add Member</string>
     <string name="cancel">CANCEL</string>
@@ -58,5 +59,9 @@
 
     <string name="str_select_member">Select Member</string>
 
-    <string name="default_notification_channel_id">trello_notification_channel_id</string>
+    <string name="default_notification_channel_id">task_master_notification_channel_id</string>
+    <string name="already_have_an_account_login">Already have an account? Login</string>
+    <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign up</string>
+
+    <string name="confirmation_message_to_delete_board">Are you sure you want to delete board \'%1$s\' ???</string>
 </resources>

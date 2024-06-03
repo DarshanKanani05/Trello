@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import com.example.trello.activities.MyProfileActivity
 
 object Constants {
     const val USERS: String = "users"
@@ -27,7 +26,7 @@ object Constants {
     const val SELECT: String = "Select"
     const val UN_SELECT: String = "UnSelect"
 
-    const val TRELLO_PREFERENCES = "TrelloPrefs"
+    const val TASK_MASTER_PREFERENCES = "TaskMasterPrefs"
     const val FCM_TOKEN_UPDATED = "fcmTokenUpdated"
     const val FCM_TOKEN = "fcmToken"
 
@@ -43,6 +42,13 @@ object Constants {
     const val FCM_KEY_MESSAGE: String = "message"
     const val FCM_KEY_DATA: String = "data"
     const val FCM_KEY_TO: String = "to"
+    const val FCM_KEY_REGISTRATION_IDS: String = "registration ids"
+    const val FCM_KEY_IS_DUE_DATE_NOTIFICATION: String = "due date notification"
+    const val FCM_KEY_BOARD_ID: String = "fcm board id"
+    const val FCM_KEY_TASK_ID: String = "fcm task id"
+    const val FCM_KEY_CARD_ID: String = "fcm card id"
+    const val TASK_ID: String = "task id"
+    const val CARD_ID: String = "card id"
 
     fun showImageChooser(activity: Activity) {
         var galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)

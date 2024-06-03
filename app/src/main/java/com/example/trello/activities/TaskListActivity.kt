@@ -1,6 +1,7 @@
 package com.example.trello.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -48,8 +49,47 @@ class TaskListActivity : BaseActivity() {
                 startActivityForResult(intent, MEMBERS_REQUEST_CODE)
                 return true
             }
+
+            R.id.action_delete_board -> {
+                alertDialogForDeleteBoard(mBoardDetails.name)
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun alertDialogForDeleteBoard(boardName: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(resources.getString(R.string.alert))
+        builder.setMessage(
+            resources.getString(
+                R.string.confirmation_message_to_delete_card,
+                boardName
+            )
+        )
+
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        builder.setPositiveButton(resources.getString(R.string.yes)) { dialogInterface, which ->
+            dialogInterface.dismiss()
+            deleteBoard()
+        }
+        builder.setNegativeButton(resources.getString(R.string.no)) { dialogInterface, which ->
+            dialogInterface.dismiss()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+    }
+
+    private fun deleteBoard() {
+        val board = mBoardDetails
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().deleteBoard(this@TaskListActivity, board)
+    }
+
+    fun boardDeletedSuccessfully() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
