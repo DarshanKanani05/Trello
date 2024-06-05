@@ -27,8 +27,8 @@ class SplashActivity : BaseActivity() {
             insets
         }
 
-        val typeFace: Typeface = Typeface.createFromAsset(assets, "carbon bl.otf")
-        binding.tvAppName.typeface = typeFace
+//        val typeFace: Typeface = Typeface.createFromAsset(assets, "carbon bl.otf")
+//        binding.tvAppName.typeface = typeFace
 
         Handler(Looper.getMainLooper()).postDelayed({
 
@@ -40,6 +40,6 @@ class SplashActivity : BaseActivity() {
                 startActivity(Intent(this, IntroActivity::class.java))
             }
             finish()
-        }, 2500)
+        }, 5000)
     }
 }
