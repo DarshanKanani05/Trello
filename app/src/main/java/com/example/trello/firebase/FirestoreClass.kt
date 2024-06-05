@@ -3,6 +3,7 @@ package com.example.trello.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import com.example.trello.R
 import com.example.trello.activities.CardDetailsActivity
 import com.example.trello.activities.CreateBoardActivity
 import com.example.trello.activities.IntroActivity
@@ -385,4 +386,32 @@ class FirestoreClass {
 //                Log.e("FetchCards", "Error fetching cards", exception)
 //            }
 //    }
+
+    fun removeMemberFromBoard(activity: MembersActivity, board: Board, user: User) {
+        if (board.createdBy != user.name) {
+            val assignedToList: ArrayList<String> = board.assignedTo
+            assignedToList.remove(user.id)
+
+            val docRef = mFireStore.collection(Constants.BOARDS)
+                .document(board.documentId)
+
+            docRef.update(Constants.ASSIGNED_TO, assignedToList)
+                .addOnSuccessListener {
+                    activity.mAssignedMembersList.remove(user)
+                    activity.setupMembersList(activity.mAssignedMembersList)
+                    activity.hideProgressDialog()
+                }
+                .addOnFailureListener { e ->
+                    activity.hideProgressDialog()
+                    Log.e(
+                        activity.javaClass.simpleName,
+                        "Error while removing member from the board.",
+                        e
+                    )
+                }
+        } else {
+            activity.hideProgressDialog()
+            activity.showErrorSnackBar("You cannot remove the creator of the board.")
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.trello.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.AsyncTask
 import android.os.Bundle
@@ -36,7 +37,7 @@ import javax.net.ssl.HttpsURLConnection
 class MembersActivity : BaseActivity() {
     private lateinit var binding: ActivityMembersBinding
     private lateinit var mBoardDetails: Board
-    private lateinit var mAssignedMembersList: ArrayList<User>
+    lateinit var mAssignedMembersList: ArrayList<User>
     private var anyChangesMade: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMembersBinding.inflate(layoutInflater)
@@ -68,7 +69,45 @@ class MembersActivity : BaseActivity() {
 
         val adapter = MemberListItemsAdapter(this, list)
         binding.rvMembersList.adapter = adapter
+
+        adapter.setOnDeleteClickListener(object : MemberListItemsAdapter.OnDeleteClickListener {
+            override fun onDeleteClick(activity: MembersActivity, position: Int, user: User) {
+//                FirestoreClass().removeMemberFromBoard(activity, mBoardDetails, user)
+                alertDialogForRemoveMember(user)
+            }
+        })
+
     }
+
+    private fun alertDialogForRemoveMember(user: User) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(resources.getString(R.string.alert))
+        builder.setMessage(
+            resources.getString(
+                R.string.confirmation_message_to_delete_member,
+                user.name
+            )
+        )
+
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        builder.setPositiveButton(resources.getString(R.string.yes)) { dialogInterface, which ->
+            dialogInterface.dismiss()
+            deleteMember(user)
+        }
+        builder.setNegativeButton(resources.getString(R.string.no)) { dialogInterface, which ->
+            dialogInterface.dismiss()
+        }
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
+    }
+
+    private fun deleteMember(user: User) {
+        showProgressDialog(resources.getString(R.string.please_wait))
+        FirestoreClass().removeMemberFromBoard(this, mBoardDetails, user)
+    }
+
 
     fun memberDetails(user: User) {
         mBoardDetails.assignedTo.add(user.id)

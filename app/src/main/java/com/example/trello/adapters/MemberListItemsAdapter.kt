@@ -10,12 +10,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.trello.R
+import com.example.trello.activities.MembersActivity
 import com.example.trello.models.User
 import com.example.trello.utils.Constants
 
 open class MemberListItemsAdapter(private val context: Context, private var list: ArrayList<User>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
+    private var onDeleteClickListener: OnDeleteClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return MyViewHolder(
             LayoutInflater.from(context).inflate(R.layout.item_member, parent, false)
@@ -53,6 +55,19 @@ open class MemberListItemsAdapter(private val context: Context, private var list
                     }
                 }
             }
+
+            if (context is MembersActivity) {
+                holder.itemView.findViewById<ImageView>(R.id.iv_member_remove).visibility =
+                    View.VISIBLE
+
+                holder.itemView.findViewById<ImageView>(R.id.iv_member_remove).setOnClickListener {
+                    if (onDeleteClickListener != null) {
+                        onDeleteClickListener!!.onDeleteClick(context, position, model)
+                    }
+                }
+            }
+
+
         }
     }
 
@@ -60,9 +75,17 @@ open class MemberListItemsAdapter(private val context: Context, private var list
         this.onClickListener = onClickListener
     }
 
+    fun setOnDeleteClickListener(onDeleteClickListener: OnDeleteClickListener) {
+        this.onDeleteClickListener = onDeleteClickListener
+    }
+
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     interface OnClickListener {
         fun onClick(position: Int, user: User, action: String)
+    }
+
+    interface OnDeleteClickListener {
+        fun onDeleteClick(activity: MembersActivity, position: Int, user: User)
     }
 }
