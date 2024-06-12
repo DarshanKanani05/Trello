@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import com.example.trello.R
 import com.example.trello.activities.IntroActivity
 import com.example.trello.activities.MainActivity
+import com.example.trello.activities.MembersActivity
 import com.example.trello.activities.TaskListActivity
 import com.example.trello.firebase.FirestoreClass
 import com.example.trello.utils.Constants
@@ -27,22 +28,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         remoteMessage.data.isNotEmpty().let {
             Log.d(TAG, "onMessageReceived: Message Data Payload : ${remoteMessage.data}")
-            val isTaskDueDateNotification =
-                remoteMessage.data[Constants.FCM_KEY_IS_DUE_DATE_NOTIFICATION] ?: "false"
 
-//            if (isTaskDueDateNotification == "true") {
-//                val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
-//                val message = remoteMessage.data[Constants.FCM_KEY_MESSAGE]!!
-//                val boardId = remoteMessage.data[Constants.FCM_KEY_BOARD_ID]!!
-//                val taskId = remoteMessage.data[Constants.FCM_KEY_TASK_ID]!!
-//                val cardId = remoteMessage.data[Constants.FCM_KEY_CARD_ID]!!
-//                sendDueDateNotification(title, message, boardId, taskId, cardId)
-//            }
-
-            val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
+            //            val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
             val message = remoteMessage.data[Constants.FCM_KEY_MESSAGE]!!
+            val boardName = remoteMessage.data[Constants.FCM_KEY_BOARD_NAME]!!
+            val notificationType = remoteMessage.data[Constants.FCM_KEY_NOTIFICATION_TYPE]!!
+//            val notificationBy = remoteMessage.data[Constants.FCM_KEY_BY]!!
+            //            val token = remoteMessage.data[Constants.FCM_KEY_TO]!!
 
-            sendNotification(title, message)
+            val getNotificationMessageResult =
+                getNotificationMessage(message, boardName, notificationType)
+
+            getNotificationMessageResult?.let { message ->
+                val title = remoteMessage.data[Constants.FCM_KEY_TITLE]!!
+                sendNotification(title, message)
+            }
+
+            //            sendNotification(title, message, boardName, notificationType, token)
         }
 
         remoteMessage.notification?.let {
@@ -65,7 +67,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
-    private fun sendNotification(title: String, message: String) {
+    private fun sendNotification(
+        title: String,
+        message: String
+    ) {
         val intent = if (FirestoreClass().getCurrentUserId().isNotEmpty()) {
             Intent(this, MainActivity::class.java)
         } else {
@@ -99,6 +104,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
         notificationManager.notify(0, notificationBuilder.build())
+    }
+
+    private fun getNotificationMessage(
+        message: String?,
+        boardName: String?,
+        notificationType: String
+    ): String? {
+        return when (notificationType) {
+            "add" -> "You have been assigned to the new Board $boardName"
+            "remove" -> "You have been removed from the Board $boardName"
+            else -> message
+        }
     }
 
 //    private fun sendDueDateNotification(

@@ -38,6 +38,8 @@ class MembersActivity : BaseActivity() {
     private lateinit var binding: ActivityMembersBinding
     private lateinit var mBoardDetails: Board
     lateinit var mAssignedMembersList: ArrayList<User>
+
+    private lateinit var mRemovedByMemberName: String
     private var anyChangesMade: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMembersBinding.inflate(layoutInflater)
@@ -72,7 +74,6 @@ class MembersActivity : BaseActivity() {
 
         adapter.setOnDeleteClickListener(object : MemberListItemsAdapter.OnDeleteClickListener {
             override fun onDeleteClick(activity: MembersActivity, position: Int, user: User) {
-//                FirestoreClass().removeMemberFromBoard(activity, mBoardDetails, user)
                 alertDialogForRemoveMember(user)
             }
         })
@@ -80,6 +81,17 @@ class MembersActivity : BaseActivity() {
     }
 
     private fun alertDialogForRemoveMember(user: User) {
+        val currentUserName = FirestoreClass().getCurrentUserName()
+        val boardCreatorName = mBoardDetails.createdBy
+        Log.e(
+            "FirestoreClass",
+            "alertDialogForRemoveMember: in starting fetching board creator name $boardCreatorName"
+        )
+        Log.e(
+            "FirestoreClass",
+            "alertDialogForRemoveMember:  fetching current user name $currentUserName"
+        )
+//        if (currentUserName == boardCreatorName) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(resources.getString(R.string.alert))
         builder.setMessage(
@@ -93,6 +105,10 @@ class MembersActivity : BaseActivity() {
 
         builder.setPositiveButton(resources.getString(R.string.yes)) { dialogInterface, which ->
             dialogInterface.dismiss()
+            Log.e(
+                "FirestoreClass",
+                "alertDialogForRemoveMember:  fetching board creator name $boardCreatorName"
+            )
             deleteMember(user)
         }
         builder.setNegativeButton(resources.getString(R.string.no)) { dialogInterface, which ->
@@ -101,11 +117,25 @@ class MembersActivity : BaseActivity() {
         val alertDialog: AlertDialog = builder.create()
         alertDialog.setCancelable(false)
         alertDialog.show()
+//        } else {
+//            Toast.makeText(this, "Only the creator can remove other members", Toast.LENGTH_SHORT)
+//                .show()
+//        }
     }
 
     private fun deleteMember(user: User) {
+        Log.e(
+            "FirestoreClass",
+            "deleteMember:  fetching board creator name ${mBoardDetails.createdBy.toString()}"
+        )
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().removeMemberFromBoard(this, mBoardDetails, user)
+        mRemovedByMemberName = FirestoreClass().getCurrentUserName()
+        val flag = FirestoreClass().removeMemberFromBoard(this, mBoardDetails, user)
+        hideProgressDialog()
+        if (flag) {
+            sendNotificationToRemovedUser(user)
+        }
+
     }
 
 
@@ -179,10 +209,52 @@ class MembersActivity : BaseActivity() {
         anyChangesMade = true
 
         setupMembersList(mAssignedMembersList)
-        SendNotificationToUserAsyncTask(mBoardDetails.name, user.fcmToken).execute()
+        val token = user.fcmToken
+        val boardName = mBoardDetails.name
+        val notificationType = "add"
+        val notificationTitle = "Assigned to the board $boardName"
+        val notificationBy = FirestoreClass().getCurrentUserName()
+        val notificationMessage =
+            "You have been assigned to the new Board $boardName by $notificationBy"
+
+        val notificationTask = SendNotificationToUserAsyncTask(
+            boardName,
+            token,
+            notificationType,
+            notificationTitle,
+            notificationMessage
+//            notificationBy
+        )
+        notificationTask.execute()
     }
 
-    private inner class SendNotificationToUserAsyncTask(val boardName: String, val token: String) :
+    private fun sendNotificationToRemovedUser(user: User) {
+        val token = user.fcmToken
+        val boardName = mBoardDetails.name
+        val notificationType = "remove"
+        val notificationTitle = "Removed from the board $boardName"
+        val notificationBy = FirestoreClass().getCurrentUserName()
+        val notificationMessage =
+            "You have been removed from the Board $boardName by $notificationBy"
+
+        val notificationTask = SendNotificationToUserAsyncTask(
+            boardName,
+            token,
+            notificationType,
+            notificationTitle,
+            notificationMessage
+//            notificationBy
+        )
+        notificationTask.execute()
+    }
+
+    private inner class SendNotificationToUserAsyncTask(
+        val boardName: String,
+        val token: String,
+        val notificationType: String,
+        val notificationTitle: String,
+        val notificationMessage: String
+    ) :
         AsyncTask<Any, Void, String>() {
         override fun onPreExecute() {
             super.onPreExecute()
@@ -213,11 +285,13 @@ class MembersActivity : BaseActivity() {
                 val wr = DataOutputStream(connection.outputStream)
                 val jsonRequest = JSONObject()
                 val dataObject = JSONObject()
-                dataObject.put(Constants.FCM_KEY_TITLE, "Assigned to the board $boardName")
-                dataObject.put(
-                    Constants.FCM_KEY_MESSAGE,
-                    "You have been assigned to the new Board by ${mAssignedMembersList[0].name}"
-                )
+                dataObject.put(Constants.FCM_KEY_TITLE, notificationTitle)
+                dataObject.put(Constants.FCM_KEY_MESSAGE, notificationMessage)
+                dataObject.put(Constants.FCM_KEY_NOTIFICATION_TYPE, notificationType)
+                dataObject.put(Constants.FCM_KEY_BOARD_NAME, boardName)
+//                dataObject.put(Constants.FCM_KEY_BY, mAssignedMembersList[0].name.toString())
+//                dataObject.put(Constants.FCM_KEY_BY, FirestoreClass().getCurrentUserName())
+//                dataObject.put(Constants.FCM_KEY_BY, notificationBy)
                 jsonRequest.put(Constants.FCM_KEY_DATA, dataObject)
                 jsonRequest.put(Constants.FCM_KEY_TO, token)
 

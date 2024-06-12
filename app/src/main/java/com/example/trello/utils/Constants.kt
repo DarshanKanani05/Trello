@@ -43,12 +43,10 @@ object Constants {
     const val FCM_KEY_DATA: String = "data"
     const val FCM_KEY_TO: String = "to"
     const val FCM_KEY_REGISTRATION_IDS: String = "registration ids"
-    const val FCM_KEY_IS_DUE_DATE_NOTIFICATION: String = "due date notification"
-    const val FCM_KEY_BOARD_ID: String = "fcm board id"
-    const val FCM_KEY_TASK_ID: String = "fcm task id"
-    const val FCM_KEY_CARD_ID: String = "fcm card id"
-    const val TASK_ID: String = "task id"
-    const val CARD_ID: String = "card id"
+    const val FCM_KEY_NOTIFICATION_TYPE: String = "notificationType"
+    const val FCM_KEY_BOARD_NAME: String = "board_name"
+    const val FCM_KEY_BY: String = "by"
+
 
     fun showImageChooser(activity: Activity) {
         var galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)

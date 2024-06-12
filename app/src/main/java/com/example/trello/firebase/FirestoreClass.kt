@@ -40,6 +40,25 @@ class FirestoreClass {
         }
     }
 
+    fun getCurrentUserName(): String {
+        var currentUserName = ""
+        val user = mFireStore.collection(Constants.USERS).document(getCurrentUserId()).get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    val user = document.toObject(User::class.java)
+                    currentUserName = user?.name ?: ""
+                    Log.e(
+                        "FirestoreClass",
+                        "getCurrentUserName:  fetching current user name $currentUserName"
+                    )
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreClass", "getCurrentUserName: Error fetching current user name ")
+            }
+        return currentUserName
+    }
+
 //    fun getUserFcmToken(userId: String): String? {
 //        var userFcmToken: String? = null
 //        val userDocumentRef = mFireStore.collection(Constants.USERS).document(userId)
@@ -387,8 +406,12 @@ class FirestoreClass {
 //            }
 //    }
 
-    fun removeMemberFromBoard(activity: MembersActivity, board: Board, user: User) {
+    fun removeMemberFromBoard(activity: MembersActivity, board: Board, user: User): Boolean {
         if (board.createdBy != user.name) {
+            Log.e(
+                "FirestoreClass",
+                "removeMemberFromBoard:  fetching board creator name ${board.createdBy.toString()}"
+            )
             val assignedToList: ArrayList<String> = board.assignedTo
             assignedToList.remove(user.id)
 
@@ -409,9 +432,11 @@ class FirestoreClass {
                         e
                     )
                 }
+            return true
         } else {
             activity.hideProgressDialog()
             activity.showErrorSnackBar("You cannot remove the creator of the board.")
+            return false
         }
     }
 }
