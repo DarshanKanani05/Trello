@@ -116,6 +116,17 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    android:id="@+id/tv_sign_up_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/tv_hint_marginStartEnd"
+                    android:layout_marginTop="@dimen/tv_hint_marginTop"
+                    android:text="@string/password_should_be_at_least_6_digit_number"
+                    android:textColor="@color/snackbar_error_color"
+                    android:textSize="@dimen/tv_hint_size"
+                    android:visibility="gone" />
+
                 <Button
                     android:id="@+id/btn_sign_up"
                     android:layout_width="match_parent"
@@ -184,6 +195,17 @@
                         android:textSize="16sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/tv_sign_in_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/tv_hint_marginStartEnd"
+                    android:layout_marginTop="@dimen/tv_hint_marginTop"
+                    android:text="@string/password_should_be_at_least_6_digit_number"
+                    android:textColor="@color/snackbar_error_color"
+                    android:textSize="@dimen/tv_hint_size"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btn_sign_in"

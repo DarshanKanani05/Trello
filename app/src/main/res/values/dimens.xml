@@ -145,5 +145,8 @@
     <dimen name="dialog_list_marginTopBottom">3dp</dimen>
 
     <dimen name="item_selected_member_image_size">45dp</dimen>
+    <dimen name="tv_hint_size">12sp</dimen>
+    <dimen name="tv_hint_marginTop">16dp</dimen>
+    <dimen name="tv_hint_marginStartEnd">30dp</dimen>
 
 </resources>

@@ -65,4 +65,5 @@
 
     <string name="confirmation_message_to_delete_board">Are you sure you want to delete board \'%1$s\' ???</string>
     <string name="confirmation_message_to_delete_member">Are you sure you want to remove member \'%1$s\' ???</string>
+    <string name="password_should_be_at_least_6_digit_number">* Password should be at least 6 digit number</string>
 </resources>

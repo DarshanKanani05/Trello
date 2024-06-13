@@ -50,6 +50,21 @@ class IntroActivity : BaseActivity() {
             signInRegisteredUser()
         }
 
+        binding.etPasswordSignup.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.tvSignUpHint.visibility = View.VISIBLE
+            } else {
+                binding.tvSignUpHint.visibility = View.GONE
+            }
+        }
+
+        binding.etPasswordSignIn.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.tvSignInHint.visibility = View.VISIBLE
+            } else {
+                binding.tvSignInHint.visibility = View.GONE
+            }
+        }
     }
 
     private fun showLoginForm() {
