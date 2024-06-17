@@ -215,6 +215,7 @@ class CardDetailsActivity : BaseActivity() {
             binding.etNameCardDetails.text.toString(),
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].createdBy,
             mBoardDetails.taskList[mTaskListPosition].cards[mCardPosition].assignedTo,
+            mBoardDetails.documentId,
             mSelectedColor,
             mSelectedDueDateMilliSeconds
         )

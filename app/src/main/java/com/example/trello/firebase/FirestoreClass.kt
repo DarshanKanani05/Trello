@@ -3,23 +3,23 @@ package com.example.trello.firebase
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import com.example.trello.R
 import com.example.trello.activities.CardDetailsActivity
 import com.example.trello.activities.CreateBoardActivity
 import com.example.trello.activities.IntroActivity
 import com.example.trello.activities.MainActivity
 import com.example.trello.activities.MembersActivity
 import com.example.trello.activities.MyProfileActivity
+import com.example.trello.activities.NotificationActivity
 import com.example.trello.activities.TaskListActivity
 import com.example.trello.models.Board
 import com.example.trello.models.Card
-import com.example.trello.models.Task
 import com.example.trello.models.User
 import com.example.trello.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import kotlinx.coroutines.tasks.await
+import java.util.Calendar
+import java.util.Date
 
 class FirestoreClass {
 
@@ -74,14 +74,28 @@ class FirestoreClass {
 //        return userFcmToken
 //    }
 
-    fun getBoardDetails(activity: TaskListActivity, documented: String) {
+    fun getBoardDetails(activity: TaskListActivity, documentId: String) {
         mFireStore.collection(Constants.BOARDS)
-            .document(documented).get()
+            .document(documentId).get()
             .addOnSuccessListener { document ->
-                Log.i(activity.javaClass.simpleName, document.toString())
-                val board = document.toObject(Board::class.java)!!
-                board.documentId = document.id
-                activity.boardDetails(board)
+
+                if (document.exists()) {
+                    Log.i(activity.javaClass.simpleName, document.toString())
+                    val board = document.toObject(Board::class.java)!!
+                    if (board != null) {
+                        board.documentId = document.id
+                        activity.boardDetails(board)
+                    } else {
+                        activity.hideProgressDialog()
+                    }
+                } else {
+                    activity.hideProgressDialog()
+                }
+
+//                Log.i(activity.javaClass.simpleName, document.toString())
+//                val board = document.toObject(Board::class.java)!!
+//                board.documentId = document.id
+//                activity.boardDetails(board)
 
             }.addOnFailureListener { e ->
                 activity.hideProgressDialog()
@@ -90,17 +104,31 @@ class FirestoreClass {
             }
     }
 
+//    fun createBoard(activity: CreateBoardActivity, board: Board) {
+//        mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
+//            .addOnSuccessListener {
+//                Log.e(activity.javaClass.simpleName, "Board Created Successfully!")
+//                Toast.makeText(activity, "Board Created Successfully!", Toast.LENGTH_SHORT).show()
+//                activity.boardCreatedSuccessfully()
+//            }.addOnFailureListener { exception ->
+//                activity.hideProgressDialog()
+//                Log.e(activity.javaClass.simpleName, "Error While Creating A Board.", exception)
+//            }
+//    }
+
     fun createBoard(activity: CreateBoardActivity, board: Board) {
-        mFireStore.collection(Constants.BOARDS).document().set(board, SetOptions.merge())
-            .addOnSuccessListener {
-                Log.e(activity.javaClass.simpleName, "Board Created Successfully!")
-                Toast.makeText(activity, "Board Created Successfully!", Toast.LENGTH_SHORT).show()
-                activity.boardCreatedSuccessfully()
-            }.addOnFailureListener { exception ->
-                activity.hideProgressDialog()
-                Log.e(activity.javaClass.simpleName, "Error While Creating A Board.", exception)
-            }
+        val documentRef = mFireStore.collection(Constants.BOARDS).document()
+        board.documentId = documentRef.id
+        documentRef.set(board, SetOptions.merge()).addOnSuccessListener {
+            Log.e(activity.javaClass.simpleName, "Board Created Successfully!")
+            Toast.makeText(activity, "Board Created Successfully!", Toast.LENGTH_SHORT).show()
+            activity.boardCreatedSuccessfully()
+        }.addOnFailureListener { exception ->
+            activity.hideProgressDialog()
+            Log.e(activity.javaClass.simpleName, "Error While Creating A Board.", exception)
+        }
     }
+
 
     fun getBoardsList(activity: MainActivity) {
         mFireStore.collection(Constants.BOARDS)
@@ -351,61 +379,6 @@ class FirestoreClass {
             }
     }
 
-//    private fun fetchAllBoards(): List<Board> {
-//        val boardsList = mutableListOf<Board>()
-//        mFireStore.collection("boards")
-//            .get()
-//            .addOnSuccessListener { documentsSnapshot ->
-//                for (documentSnapshot in documentsSnapshot) {
-//                    val board = documentSnapshot.toObject(Board::class.java)
-//                    board?.let {
-//                        // Fetch tasks and cards for the board
-//                        fetchTasksAndCards(it)
-//                        boardsList.add(it)
-//                    }
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.e("FetchBoards", "Error fetching boards", exception)
-//            }
-//
-//        return boardsList
-//    }
-//
-//    private fun fetchTasksAndCards(board: Board) {
-//        mFireStore.collection("boards/${board.documentId}/tasks")
-//            .get()
-//            .addOnSuccessListener { documentsSnapshot ->
-//                for (documentSnapshot in documentsSnapshot) {
-//                    val task = documentSnapshot.toObject(Task::class.java)
-//                    task?.let {
-//                        // Fetch cards for the task
-//                        fetchCardsForTask(it)
-//                        board.taskList.add(it)
-//                    }
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.e("FetchTasks", "Error fetching tasks", exception)
-//            }
-//    }
-//
-//    private fun fetchCardsForTask(task: Task) {
-//        mFireStore.collection("tasks/${task.documentId}/cards")
-//            .get()
-//            .addOnSuccessListener { documentsSnapshot ->
-//                for (documentSnapshot in documentsSnapshot) {
-//                    val card = documentSnapshot.toObject(Card::class.java)
-//                    card?.let {
-//                        task.cards.add(it)
-//                    }
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.e("FetchCards", "Error fetching cards", exception)
-//            }
-//    }
-
     fun removeMemberFromBoard(activity: MembersActivity, board: Board, user: User): Boolean {
         if (board.createdBy != user.name) {
             Log.e(
@@ -438,5 +411,61 @@ class FirestoreClass {
             activity.showErrorSnackBar("You cannot remove the creator of the board.")
             return false
         }
+    }
+
+    fun getUpcomingCards(activity: NotificationActivity) {
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGNED_TO, getCurrentUserId()).get()
+            .addOnSuccessListener { document ->
+                val boardsList: ArrayList<Board> = ArrayList()
+                for (i in document.documents) {
+                    val board = i.toObject(Board::class.java)
+                    board!!.documentId = i.id
+                    boardsList.add(board)
+                }
+                retrieveCardsFromBoards(activity, boardsList)
+            }.addOnFailureListener { e ->
+                activity.hideProgressDialog()
+                Log.e(
+                    activity.javaClass.simpleName,
+                    "getUpcomingCards: Error while getting boards."
+                )
+            }
+    }
+
+    private fun retrieveCardsFromBoards(
+        activity: NotificationActivity,
+        boardsList: ArrayList<Board>
+    ) {
+        val upcomingCards = ArrayList<Card>()
+        val calendar = Calendar.getInstance()
+
+        // Set to the start of today
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startOfToday = calendar.time
+
+        // Set to the end of the day after tomorrow
+        calendar.add(Calendar.DAY_OF_YEAR, 2)
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        calendar.set(Calendar.MILLISECOND, 999)
+        val endOfDayAfterTomorrow = calendar.time
+
+        for (board in boardsList) {
+            for (task in board.taskList) {
+                for (card in task.cards) {
+                    val cardDueDate = Date(card.dueDate)
+                    if (cardDueDate in startOfToday..endOfDayAfterTomorrow) {
+                        upcomingCards.add(card)
+                    }
+                }
+            }
+        }
+        upcomingCards.sortWith(compareBy { it.dueDate })
+        activity.upcomingCardsLoaded(upcomingCards)
     }
 }

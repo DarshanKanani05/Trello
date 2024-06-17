@@ -103,11 +103,16 @@ class TaskListActivity : BaseActivity() {
             insets
         }
 
+
         if (intent.hasExtra(Constants.DOCUMENT_ID)) {
-            mBoardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID).toString()
+            mBoardDocumentId = intent.getStringExtra(Constants.DOCUMENT_ID) ?: ""
+            if (mBoardDocumentId.isNotEmpty()) {
+                showProgressDialog(resources.getString(R.string.please_wait))
+                FirestoreClass().getBoardDetails(this, mBoardDocumentId)
+            }
         }
 
-        showProgressDialog(resources.getString(R.string.please_wait))
+//        showProgressDialog(resources.getString(R.string.please_wait))
         FirestoreClass().getBoardDetails(this, mBoardDocumentId)
     }
 
@@ -123,6 +128,9 @@ class TaskListActivity : BaseActivity() {
 
     fun boardDetails(board: Board) {
         mBoardDetails = board
+        if (mBoardDetails.documentId.isEmpty()) {
+            mBoardDetails.documentId = intent.getStringExtra(Constants.DOCUMENT_ID) ?: ""
+        }
 
         hideProgressDialog()
         setupActionBar()
@@ -193,7 +201,12 @@ class TaskListActivity : BaseActivity() {
         val cardAssignedUsersList: ArrayList<String> = ArrayList()
         cardAssignedUsersList.add(FirestoreClass().getCurrentUserId())
 
-        val card = Card(cardName, FirestoreClass().getCurrentUserId(), cardAssignedUsersList)
+        val card = Card(
+            cardName,
+            FirestoreClass().getCurrentUserId(),
+            cardAssignedUsersList,
+            mBoardDetails.documentId
+        )
 
         val cardsList = mBoardDetails.taskList[position].cards
         cardsList.add(card)

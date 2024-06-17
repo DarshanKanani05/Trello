@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -85,6 +86,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             intent.putExtra(Constants.NAME, mUserName)
             startActivityForResult(intent, CREATE_BOARD_REQUEST_CODE)
         }
+
+        binding.root.findViewById<ImageView>(R.id.iv_notification).setOnClickListener {
+            startActivity(Intent(this, NotificationActivity::class.java))
+        }
     }
 
     fun populateBoardsListToUI(boardsList: ArrayList<Board>) {
@@ -110,30 +115,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     startActivity(intent)
                 }
             })
-
-//            boardsList.forEach { board ->
-//                board.taskList.forEach { task ->
-//                    task.cards.forEach { card ->
-//                        val cardDueDate = card.dueDate
-//                        val currentDate = System.currentTimeMillis()
-//                        val oneDayBeforeDueDate = cardDueDate - (24 * 60 * 60 * 1000)
-//
-//                        if (currentDate in oneDayBeforeDueDate..cardDueDate) {
-//                            val assignedToTokens = card.assignedTo.map { userId ->
-//                                FirestoreClass().getUserFcmToken(userId)
-//                            }
-//
-//                            SendDueDateNotificationAsyncTask(
-//                                board.name,
-//                                task.title,
-//                                card.name,
-//                                card.dueDate,
-//                                assignedToTokens
-//                            ).execute()
-//                        }
-//                    }
-//                }
-//            }
         } else {
             rvBoardsList.visibility = View.GONE
             tvNoBoardsAvailable.visibility = View.VISIBLE
